@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { FlatList, ScrollView, Text, View } from 'react-native';
+import { FlatList, Text, View } from 'react-native';
+import { ScrollView } from 'react-native-virtualized-view'
 import { Card, ListItem, Avatar } from 'react-native-elements';
 import { LEADERS } from '../shared/leaders';
 
