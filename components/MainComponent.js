@@ -151,6 +151,13 @@ function MainNavigatorScreen() {
   );
 }
 
+// redux
+import { connect } from 'react-redux';
+import { fetchLeaders } from '../redux/ActionCreators';
+const mapDispatchToProps = (dispatch) => ({
+  fetchLeaders: () => dispatch(fetchLeaders())
+});
+
 // ---------------- ROOT CLASS COMPONENT ----------------
 class Main extends Component {
   render() {
@@ -160,6 +167,10 @@ class Main extends Component {
       </NavigationContainer>
     );
   }
+  componentDidMount() {
+    // redux
+    this.props.fetchLeaders();
+  }
 }
 
-export default Main;
+export default connect(null, mapDispatchToProps)(Main);

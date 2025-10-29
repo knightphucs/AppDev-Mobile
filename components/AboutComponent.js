@@ -2,7 +2,10 @@ import React, { Component } from 'react';
 import { FlatList, Text, View } from 'react-native';
 import { ScrollView } from 'react-native-virtualized-view'
 import { Card, ListItem, Avatar } from 'react-native-elements';
-import { LEADERS } from '../shared/leaders';
+// import { LEADERS } from '../shared/leaders';
+import { baseUrl } from '../shared/baseUrl'
+// redux
+import { connect } from 'react-redux';
 
 class History extends Component {
   render() {
@@ -27,37 +30,26 @@ class History extends Component {
   }
 }
 
-class About extends Component {
-  constructor(props) {
-      super(props);
-      this.state = {
-        leaders: LEADERS
-      };
-    }
-
+class RenderLeadership extends Component {
   render() {
     return (
-      <ScrollView>
-        <History />
-        <Card>
-          <Card.Title>Corporate Leadership</Card.Title>
-          <Card.Divider />
-          <FlatList
-            data={this.state.leaders}
-            renderItem={({ item, index }) => this.renderLeaders(item, index)}
-            keyExtractor={(item) => item.id.toString()}
-            scrollEnabled={false}
-          />
-        </Card>
-      </ScrollView>
-    );
+      <Card>
+        <Card.Title>Corporate Leadership</Card.Title>
+        <Card.Divider />
+        <FlatList
+          data={this.props.leaders}
+          renderItem={({ item, index }) => this.renderLeaders(item, index)}
+          keyExtractor={(item) => item.id.toString()}
+          scrollEnabled={false}
+        />
+      </Card>
+    )
   }
-
   renderLeaders(item, index) {
     return (
       <ListItem key={index} bottomDivider>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Avatar source={require('./images/alberto.png')} rounded />
+          <Avatar rounded source={{ uri: baseUrl + item.image }} />
           <ListItem.Content style={{ marginLeft: 10 }}>
             <ListItem.Title>{item.name}</ListItem.Title>
             <ListItem.Subtitle>{item.description}</ListItem.Subtitle>
@@ -68,4 +60,28 @@ class About extends Component {
   }
 }
 
-export default About;
+const mapStateToProps = (state) => {
+  return {
+    leaders: state.leaders
+  }
+};
+
+class About extends Component {
+  constructor(props) {
+      super(props);
+      // this.state = {
+      //   leaders: LEADERS
+      // };
+    }
+
+  render() {
+    return (
+      <ScrollView>
+        <History />
+        <RenderLeadership leaders={this.props.leaders.leaders}/>
+      </ScrollView>
+    );
+  }
+}
+
+export default connect(mapStateToProps)(About);
