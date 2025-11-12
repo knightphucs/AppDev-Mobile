@@ -4,6 +4,7 @@ import { ScrollView } from 'react-native-virtualized-view'
 import { Card, ListItem, Avatar } from 'react-native-elements';
 // import { LEADERS } from '../shared/leaders';
 import { baseUrl } from '../shared/baseUrl'
+import Loading from './LoadingComponent';
 // redux
 import { connect } from 'react-redux';
 
@@ -32,18 +33,36 @@ class History extends Component {
 
 class RenderLeadership extends Component {
   render() {
-    return (
-      <Card>
-        <Card.Title>Corporate Leadership</Card.Title>
-        <Card.Divider />
-        <FlatList
-          data={this.props.leaders}
-          renderItem={({ item, index }) => this.renderLeaders(item, index)}
-          keyExtractor={(item) => item.id.toString()}
-          scrollEnabled={false}
-        />
-      </Card>
-    )
+    if (this.props.isLoading) {
+      return (
+        <Card>
+          <Card.Title>Corporate Leadership</Card.Title>
+          <Card.Divider />
+          <Loading />
+        </Card>
+      );
+    } else if (this.props.errMess) {
+      return (
+        <Card>
+          <Card.Title>Corporate Leadership</Card.Title>
+          <Card.Divider />
+          <Text>{this.props.errMess}</Text>
+        </Card>
+      );
+    } else {
+      return (
+        <Card>
+          <Card.Title>Corporate Leadership</Card.Title>
+          <Card.Divider />
+          <FlatList
+            data={this.props.leaders}
+            renderItem={({ item, index }) => this.renderLeaders(item, index)}
+            keyExtractor={(item) => item.id.toString()}
+            scrollEnabled={false}
+          />
+        </Card>
+      )
+    }
   }
   renderLeaders(item, index) {
     return (
@@ -78,7 +97,10 @@ class About extends Component {
     return (
       <ScrollView>
         <History />
-        <RenderLeadership leaders={this.props.leaders.leaders}/>
+        <RenderLeadership
+          leaders={this.props.leaders.leaders}
+          isLoading={this.props.leaders.isLoading}
+          errMess={this.props.leaders.errMess} />
       </ScrollView>
     );
   }
