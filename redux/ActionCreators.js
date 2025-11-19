@@ -89,7 +89,7 @@ export const postComment = (dishId, rating, author, comment) => (dispatch) => {
   };
   setTimeout(() => {
     dispatch(addComment(newComment));
-  }, 2000);
+  }, 500);
 };
 
 // promotions

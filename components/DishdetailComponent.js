@@ -27,6 +27,7 @@ class RenderDish extends Component {
             <Card.FeaturedTitle>{dish.name}</Card.FeaturedTitle>
           </Image>
           <Text style={{ margin: 10 }}>{dish.description}</Text>
+          <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginVertical: 10 }}>
           <Icon
             raised
             reverse
@@ -47,6 +48,7 @@ class RenderDish extends Component {
             color="#512DA8"
             onPress={this.props.onPressComment}
           />
+          </View>
         </Card>
       );
     }
