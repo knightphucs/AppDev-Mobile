@@ -74,7 +74,7 @@ class RenderComments extends Component {
     return (
       <View key={index} style={{ margin: 10 }}>
         <Text style={{ fontSize: 14 }}>{item.comment}</Text>
-        <Rating readonly startingValue={item.rating} imageSize={12} />
+        <Rating readonly startingValue={item.rating} imageSize={12} style={{ alignItems: 'flex-start', paddingVertical: 5 }}/>
         <Text style={{ fontSize: 12 }}>
           {"-- " + item.author + ", " + item.date}{" "}
         </Text>
