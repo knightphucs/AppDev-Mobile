@@ -153,7 +153,8 @@ class Dishdetail extends Component {
           <Animatable.View animation='fadeInUp' duration={2000} delay={1000}>
             <RenderComments comments={comments} />
           </Animatable.View> 
-          <Modal
+        </ScrollView>
+        <Modal
             animationType="slide"
             transparent={false}
             visible={this.state.showModal}
@@ -191,7 +192,6 @@ class Dishdetail extends Component {
               />
             </View>
           </Modal>
-        </ScrollView>
       </>
     );
   }
