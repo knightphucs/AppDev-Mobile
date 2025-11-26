@@ -87,9 +87,16 @@ export const postComment = (dishId, rating, author, comment) => (dispatch) => {
     comment: comment,
     date: new Date().toISOString(),
   };
-  setTimeout(() => {
-    dispatch(addComment(newComment));
-  }, 500);
+  fetch(baseUrl + 'comments', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(newComment)
+  }).then((response) => {
+      if (!response.ok) throw Error('Error ' + response.status + ': ' + response.statusText);
+      else return response.json();
+    })
+    .then((cmt) => dispatch(addComment(cmt)))
+    .catch((error) => dispatch(commentsFailed(error.message)));
 };
 
 // promotions
@@ -126,4 +133,9 @@ export const postFavorite = (dishId) => (dispatch) => {
 const addFavorite = (dishId) => ({
   type: ActionTypes.ADD_FAVORITE,
   payload: dishId,
+});
+
+export const deleteFavorite = (dishId) => ({
+  type: ActionTypes.DELETE_FAVORITE,
+  payload: dishId
 });

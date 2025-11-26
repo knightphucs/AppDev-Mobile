@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { FlatList, Text, View } from 'react-native';
 import { ScrollView } from 'react-native-virtualized-view'
 import { Card, ListItem, Avatar } from 'react-native-elements';
+import * as Animatable from 'react-native-animatable';
 // import { LEADERS } from '../shared/leaders';
 import { baseUrl } from '../shared/baseUrl'
 import Loading from './LoadingComponent';
@@ -96,11 +97,15 @@ class About extends Component {
   render() {
     return (
       <ScrollView>
-        <History />
-        <RenderLeadership
-          leaders={this.props.leaders.leaders}
-          isLoading={this.props.leaders.isLoading}
-          errMess={this.props.leaders.errMess} />
+        <Animatable.View animation='fadeInDown' duration={2000} delay={1000}>
+          <History />
+        </Animatable.View>
+        <Animatable.View animation='fadeInUp' duration={2000} delay={1000}>
+          <RenderLeadership
+            leaders={this.props.leaders.leaders}
+            isLoading={this.props.leaders.isLoading}
+            errMess={this.props.leaders.errMess} />
+        </Animatable.View>
       </ScrollView>
     );
   }

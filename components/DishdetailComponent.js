@@ -1,19 +1,42 @@
 import React, { Component } from "react";
-import { View, Text, FlatList } from "react-native";
+import { View, Text, FlatList, PanResponder, Alert } from "react-native";
 import { Card, Image, Icon } from "react-native-elements";
 import { ScrollView } from "react-native-virtualized-view";
 import { Rating, Input, Button } from "react-native-elements";
 import { Modal } from "react-native";
+import * as Animatable from 'react-native-animatable';
 // import { DISHES } from '../shared/dishes';
 // import { COMMENTS } from '../shared/comments';
 import { baseUrl } from "../shared/baseUrl";
 
 class RenderDish extends Component {
   render() {
+    // gesture
+    const recognizeDrag = ({ moveX, moveY, dx, dy }) => {
+      if (dx < -200) return 1; // right to left
+      return 0;
+    };
+    const panResponder = PanResponder.create({
+      onStartShouldSetPanResponder: (e, gestureState) => { return true; },
+      onPanResponderEnd: (e, gestureState) => {
+        if (recognizeDrag(gestureState) === 1) {
+          Alert.alert(
+            'Add Favorite',
+            'Are you sure you wish to add ' + dish.name + ' to favorite?',
+            [
+              { text: 'Cancel', onPress: () => { /* nothing */ } },
+              { text: 'OK', onPress: () => { this.props.favorite ? alert('Already favorite') : this.props.onPressFavorite() } },
+            ]
+          );
+        }
+        return true;
+      }
+    });
+    //render
     const dish = this.props.dish;
     if (dish != null) {
       return (
-        <Card>
+        <Card {...panResponder.panHandlers}>
           <Image
             source={{ uri: baseUrl + dish.image }}
             style={{
@@ -119,52 +142,56 @@ class Dishdetail extends Component {
     return (
       <>
         <ScrollView>
-          <RenderDish
-            dish={dish}
-            favorite={favorite}
-            onPressFavorite={() => this.markFavorite(dishId)}
-            onPressComment={() => this.toggleModal()}
-          />
-          <RenderComments comments={comments} />
+          <Animatable.View animation='fadeInDown' duration={2000} delay={1000}>
+            <RenderDish
+                dish={dish}
+                favorite={favorite}
+                onPressFavorite={() => this.markFavorite(dishId)}
+                onPressComment={() => this.toggleModal()}
+              />
+          </Animatable.View>
+          <Animatable.View animation='fadeInUp' duration={2000} delay={1000}>
+            <RenderComments comments={comments} />
+          </Animatable.View> 
+          <Modal
+            animationType="slide"
+            transparent={false}
+            visible={this.state.showModal}
+            onRequestClose={() => this.toggleModal()}
+          >
+            <View style={{ marginTop: 50, padding: 20 }}>
+              <Rating
+                showRating
+                startingValue={this.state.rating}
+                onFinishRating={(rate) => this.setState({ rating: rate })}
+              />
+
+              <Input
+                placeholder="Author"
+                leftIcon={{ type: "font-awesome", name: "user-o" }}
+                onChangeText={(text) => this.setState({ author: text })}
+              />
+
+              <Input
+                placeholder="Comment"
+                leftIcon={{ type: "font-awesome", name: "comment-o" }}
+                onChangeText={(text) => this.setState({ comment: text })}
+              />
+
+              <Button
+                title="Submit"
+                onPress={() => this.handleSubmit()}
+                buttonStyle={{ backgroundColor: "#512DA8" }}
+              />
+
+              <Button
+                title="Cancel"
+                onPress={() => this.resetForm()}
+                buttonStyle={{ backgroundColor: "gray", marginTop: 10 }}
+              />
+            </View>
+          </Modal>
         </ScrollView>
-        <Modal
-          animationType="slide"
-          transparent={false}
-          visible={this.state.showModal}
-          onRequestClose={() => this.toggleModal()}
-        >
-          <View style={{ marginTop: 50, padding: 20 }}>
-            <Rating
-              showRating
-              startingValue={this.state.rating}
-              onFinishRating={(rate) => this.setState({ rating: rate })}
-            />
-
-            <Input
-              placeholder="Author"
-              leftIcon={{ type: "font-awesome", name: "user-o" }}
-              onChangeText={(text) => this.setState({ author: text })}
-            />
-
-            <Input
-              placeholder="Comment"
-              leftIcon={{ type: "font-awesome", name: "comment-o" }}
-              onChangeText={(text) => this.setState({ comment: text })}
-            />
-
-            <Button
-              title="Submit"
-              onPress={() => this.handleSubmit()}
-              buttonStyle={{ backgroundColor: "#512DA8" }}
-            />
-
-            <Button
-              title="Cancel"
-              onPress={() => this.resetForm()}
-              buttonStyle={{ backgroundColor: "gray", marginTop: 10 }}
-            />
-          </View>
-        </Modal>
       </>
     );
   }
