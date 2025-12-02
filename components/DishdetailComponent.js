@@ -4,36 +4,58 @@ import { Card, Image, Icon } from "react-native-elements";
 import { ScrollView } from "react-native-virtualized-view";
 import { Rating, Input, Button } from "react-native-elements";
 import { Modal } from "react-native";
-import * as Animatable from 'react-native-animatable';
+import * as Animatable from "react-native-animatable";
 // import { DISHES } from '../shared/dishes';
 // import { COMMENTS } from '../shared/comments';
 import { baseUrl } from "../shared/baseUrl";
 
 class RenderDish extends Component {
   render() {
-    // gesture
+    const dish = this.props.dish;
+
     const recognizeDrag = ({ moveX, moveY, dx, dy }) => {
-      if (dx < -200) return 1; // right to left
-      return 0;
+      if (dx < -200) return true;
+      return false;
     };
+
+    const recognizeComment = ({ moveX, moveY, dx, dy }) => {
+      if (dx > 200) return true;
+      return false;
+    };
+
     const panResponder = PanResponder.create({
-      onStartShouldSetPanResponder: (e, gestureState) => { return true; },
+      onStartShouldSetPanResponder: (e, gestureState) => {
+        return true;
+      },
       onPanResponderEnd: (e, gestureState) => {
-        if (recognizeDrag(gestureState) === 1) {
+        if (recognizeDrag(gestureState)) {
           Alert.alert(
-            'Add Favorite',
-            'Are you sure you wish to add ' + dish.name + ' to favorite?',
+            "Add Favorite",
+            "Are you sure you wish to add " + dish.name + " to favorite?",
             [
-              { text: 'Cancel', onPress: () => { /* nothing */ } },
-              { text: 'OK', onPress: () => { this.props.favorite ? alert('Already favorite') : this.props.onPressFavorite() } },
+              {
+                text: "Cancel",
+                onPress: () => {
+                  /* nothing */
+                },
+              },
+              {
+                text: "OK",
+                onPress: () => {
+                  this.props.favorite
+                    ? alert("Already favorite")
+                    : this.props.onPressFavorite();
+                },
+              },
             ]
           );
+        } else if (recognizeComment(gestureState)) {
+          this.props.onPressComment();
         }
         return true;
-      }
+      },
     });
-    //render
-    const dish = this.props.dish;
+
     if (dish != null) {
       return (
         <Card {...panResponder.panHandlers}>
@@ -50,27 +72,34 @@ class RenderDish extends Component {
             <Card.FeaturedTitle>{dish.name}</Card.FeaturedTitle>
           </Image>
           <Text style={{ margin: 10 }}>{dish.description}</Text>
-          <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginVertical: 10 }}>
-          <Icon
-            raised
-            reverse
-            type="font-awesome"
-            color="#f50"
-            name={this.props.favorite ? "heart" : "heart-o"}
-            onPress={() =>
-              this.props.favorite
-                ? alert("Already favorite")
-                : this.props.onPressFavorite()
-            }
-          />
-          <Icon
-            raised
-            reverse
-            name="pencil"
-            type="font-awesome"
-            color="#512DA8"
-            onPress={this.props.onPressComment}
-          />
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+              marginVertical: 10,
+            }}
+          >
+            <Icon
+              raised
+              reverse
+              type="font-awesome"
+              color="#f50"
+              name={this.props.favorite ? "heart" : "heart-o"}
+              onPress={() =>
+                this.props.favorite
+                  ? alert("Already favorite")
+                  : this.props.onPressFavorite()
+              }
+            />
+            <Icon
+              raised
+              reverse
+              name="pencil"
+              type="font-awesome"
+              color="#512DA8"
+              onPress={this.props.onPressComment}
+            />
           </View>
         </Card>
       );
@@ -97,7 +126,12 @@ class RenderComments extends Component {
     return (
       <View key={index} style={{ margin: 10 }}>
         <Text style={{ fontSize: 14 }}>{item.comment}</Text>
-        <Rating readonly startingValue={item.rating} imageSize={12} style={{ alignItems: 'flex-start', paddingVertical: 5 }}/>
+        <Rating
+          readonly
+          startingValue={item.rating}
+          imageSize={12}
+          style={{ alignItems: "flex-start", paddingVertical: 5 }}
+        />
         <Text style={{ fontSize: 12 }}>
           {"-- " + item.author + ", " + item.date}{" "}
         </Text>
@@ -142,56 +176,56 @@ class Dishdetail extends Component {
     return (
       <>
         <ScrollView>
-          <Animatable.View animation='fadeInDown' duration={2000} delay={1000}>
+          <Animatable.View animation="fadeInDown" duration={2000} delay={1000}>
             <RenderDish
-                dish={dish}
-                favorite={favorite}
-                onPressFavorite={() => this.markFavorite(dishId)}
-                onPressComment={() => this.toggleModal()}
-              />
+              dish={dish}
+              favorite={favorite}
+              onPressFavorite={() => this.markFavorite(dishId)}
+              onPressComment={() => this.toggleModal()}
+            />
           </Animatable.View>
-          <Animatable.View animation='fadeInUp' duration={2000} delay={1000}>
+          <Animatable.View animation="fadeInUp" duration={2000} delay={1000}>
             <RenderComments comments={comments} />
-          </Animatable.View> 
+          </Animatable.View>
         </ScrollView>
         <Modal
-            animationType="slide"
-            transparent={false}
-            visible={this.state.showModal}
-            onRequestClose={() => this.toggleModal()}
-          >
-            <View style={{ marginTop: 50, padding: 20 }}>
-              <Rating
-                showRating
-                startingValue={this.state.rating}
-                onFinishRating={(rate) => this.setState({ rating: rate })}
-              />
+          animationType="slide"
+          transparent={false}
+          visible={this.state.showModal}
+          onRequestClose={() => this.toggleModal()}
+        >
+          <View style={{ marginTop: 50, padding: 20 }}>
+            <Rating
+              showRating
+              startingValue={this.state.rating}
+              onFinishRating={(rate) => this.setState({ rating: rate })}
+            />
 
-              <Input
-                placeholder="Author"
-                leftIcon={{ type: "font-awesome", name: "user-o" }}
-                onChangeText={(text) => this.setState({ author: text })}
-              />
+            <Input
+              placeholder="Author"
+              leftIcon={{ type: "font-awesome", name: "user-o" }}
+              onChangeText={(text) => this.setState({ author: text })}
+            />
 
-              <Input
-                placeholder="Comment"
-                leftIcon={{ type: "font-awesome", name: "comment-o" }}
-                onChangeText={(text) => this.setState({ comment: text })}
-              />
+            <Input
+              placeholder="Comment"
+              leftIcon={{ type: "font-awesome", name: "comment-o" }}
+              onChangeText={(text) => this.setState({ comment: text })}
+            />
 
-              <Button
-                title="Submit"
-                onPress={() => this.handleSubmit()}
-                buttonStyle={{ backgroundColor: "#512DA8" }}
-              />
+            <Button
+              title="Submit"
+              onPress={() => this.handleSubmit()}
+              buttonStyle={{ backgroundColor: "#512DA8" }}
+            />
 
-              <Button
-                title="Cancel"
-                onPress={() => this.resetForm()}
-                buttonStyle={{ backgroundColor: "gray", marginTop: 10 }}
-              />
-            </View>
-          </Modal>
+            <Button
+              title="Cancel"
+              onPress={() => this.resetForm()}
+              buttonStyle={{ backgroundColor: "gray", marginTop: 10 }}
+            />
+          </View>
+        </Modal>
       </>
     );
   }
