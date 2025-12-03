@@ -9,6 +9,7 @@ import {
   Button,
   Modal,
   Alert,
+  TouchableOpacity,
 } from "react-native";
 import { Icon } from "react-native-elements";
 import { Picker } from "@react-native-picker/picker";
@@ -125,11 +126,12 @@ class Reservation extends Component {
             />
           </View>
           <View style={styles.formRow}>
-            <Button
-              title="Reserve"
-              color="#7cc"
-              onPress={() => this.handleReservation()}
-            />
+            <TouchableOpacity 
+              style={styles.reserveButton} 
+              onPress={() => this.handleReservation()}>
+              <Text style={styles.reserveButtonText}>RESERVE</Text>
+            </TouchableOpacity>
+            
           </View>
           {/* <Modal
             animationType={"slide"}
@@ -160,6 +162,22 @@ const styles = StyleSheet.create({
   },
   formLabel: { fontSize: 18, flex: 2 },
   formItem: { flex: 1 },
+  reserveButton: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+    backgroundColor: '#7cc',
+    paddingVertical: 12,
+    width: '100%',
+    borderRadius: 5,
+    alignSelf: 'center',
+    alignItems: 'center'
+  },
+  reserveButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold'
+  }
   // modal: { justifyContent: "center", margin: 20 },
   // modalTitle: {
   //   fontSize: 24,
